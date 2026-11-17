@@ -72,9 +72,19 @@ if ($accion === 'login' && !$logueado) {
     $consulta = $conexion->prepare('SELECT id, contrasena_hash, rol FROM usuarios WHERE usuario = ?');
     $consulta->bind_param('s', $usuario);
     $consulta->execute();
+    $usuarioId = 0;
+    $contrasenaHash = '';
+    $rolUsuario = '';
     $consulta->bind_result($usuarioId, $contrasenaHash, $rolUsuario);
 
-    if (!$bloqueadoLogin && $consulta->fetch() && password_verify($contrasena, $contrasenaHash)) {
+    if (
+        !$bloqueadoLogin
+        && $consulta->fetch()
+        && is_string($contrasenaHash)
+        && $contrasenaHash !== ''
+        && is_string($rolUsuario)
+        && password_verify($contrasena, $contrasenaHash)
+    ) {
         $consulta->close();
         $consulta = $conexion->prepare('DELETE FROM intentos_login WHERE ip = ?');
         $consulta->bind_param('s', $ipCliente);
