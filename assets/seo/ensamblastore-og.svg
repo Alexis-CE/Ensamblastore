@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">EnsamblaStore: tecnología a tu medida</title>
+  <desc id="description">Computadoras y componentes para trabajar, crear y jugar.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0f1f"/>
+      <stop offset="1" stop-color="#17264b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3dffa0"/>
+      <stop offset="1" stop-color="#2f6bff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <path d="M760 0h440v630H560z" fill="url(#accent)" opacity=".92"/>
+  <circle cx="1020" cy="170" r="220" fill="#fff" opacity=".08"/>
+  <rect x="70" y="68" width="64" height="64" rx="12" fill="#3dffa0"/>
+  <text x="102" y="112" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" font-weight="800" fill="#0a0f1f">e/</text>
+  <text x="158" y="98" font-family="Arial,sans-serif" font-size="25" font-weight="800" letter-spacing="2" fill="#eef2fb">ENSAMBLA</text>
+  <text x="158" y="125" font-family="Arial,sans-serif" font-size="16" font-weight="700" letter-spacing="4" fill="#9ca7c2">STORE</text>
+  <text x="72" y="280" font-family="Arial,sans-serif" font-size="56" font-weight="800" fill="#eef2fb">Tecnología a</text>
+  <text x="72" y="350" font-family="Arial,sans-serif" font-size="56" font-weight="800" fill="#3dffa0">tu medida.</text>
+  <text x="76" y="410" font-family="Arial,sans-serif" font-size="23" fill="#c6cee0">Computadoras y componentes para armar tu PC</text>
+  <g transform="translate(780 220)" fill="none" stroke="#0a0f1f" stroke-linecap="round" stroke-linejoin="round" stroke-width="16">
+    <rect x="30" y="0" width="260" height="176" rx="14"/>
+    <path d="M0 216h320l-24 28H24z"/>
+    <circle cx="160" cy="88" r="8" fill="#0a0f1f"/>
+  </g>
+  <text x="76" y="555" font-family="Arial,sans-serif" font-size="16" font-weight="700" letter-spacing="3" fill="#9ca7c2">ENSAMBLASTORE.COM</text>
+</svg>

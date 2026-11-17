@@ -1,0 +1,7 @@
+# temporales y respaldos (los respaldos de la base viajan por la USB, no por git)
+.playwright-mcp/
+*.log
+respaldo_*.sql
+*.tmp
+Thumbs.db
+CAMBIOS_*.txt

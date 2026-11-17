@@ -1,0 +1,110 @@
+<section class="catalog-section catalog-section-alt" id="componentes" data-catalog="componentes" aria-labelledby="componentes-title">
+    <header class="catalog-heading">
+        <p class="eyebrow"><span></span> CATÁLOGO</p>
+        <h1 id="componentes-title">Componentes</h1>
+        <p>Explora piezas para actualizar tu computadora o armar un equipo desde cero.</p>
+    </header>
+
+    <div class="catalog-filters" data-catalog-filter="componentes">
+        <label class="catalog-search">Buscar producto
+            <input type="search" data-product-search placeholder="Escribe nombre, marca o característica" autocomplete="off">
+        </label>
+        <label>Marca
+            <select data-filter-brand>
+                <option value="todas">Todas las marcas</option>
+                <?php foreach ($marcasCatalogo as $clave => $nombreMarca): ?>
+                    <option value="<?= $h($clave) ?>"><?= $h($nombreMarca) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <label>Componente
+            <select data-filter-category>
+                <option value="todas">Todos los componentes</option>
+                <?php foreach ($categoriasCatalogo as $categoria): ?>
+                    <option value="<?= $h($categoria) ?>"><?= $h($etiquetasCategorias[$categoria] ?? ucfirst(str_replace('-', ' ', $categoria))) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+    </div>
+
+    <form class="recommendation-quiz" data-recommendation-quiz>
+        <div class="quiz-heading">
+            <h3>Encuentra el componente ideal</h3>
+            <p>Cuéntanos qué necesitas y te mostramos opciones del catálogo.</p>
+        </div>
+        <label>Presupuesto máximo
+            <select data-quiz-budget>
+                <option value="">Sin límite</option>
+                <option value="1000">Hasta $1,000</option>
+                <option value="3000">Hasta $3,000</option>
+                <option value="7500">Hasta $7,500</option>
+                <option value="15000">Hasta $15,000</option>
+            </select>
+        </label>
+        <label>¿Qué buscas?
+            <select data-quiz-use>
+                <option value="">Cualquier componente</option>
+                <option value="gaming">Mejorar gaming</option>
+                <option value="creacion">Diseño y creación</option>
+                <option value="actualizar">Actualizar mi equipo</option>
+            </select>
+        </label>
+        <label>¿Qué priorizas?
+            <select data-quiz-priority>
+                <option value="">Equilibrio</option>
+                <option value="potencia">Potencia y rendimiento</option>
+                <option value="almacenamiento">Almacenamiento</option>
+            </select>
+        </label>
+        <div class="quiz-actions">
+            <button type="submit">Ver recomendaciones</button>
+            <button type="reset" class="quiz-reset">Limpiar</button>
+        </div>
+    </form>
+
+    <section class="recommendation-results" data-recommendation-results hidden aria-live="polite">
+        <h3>Recomendaciones para ti</h3>
+        <ol data-recommendation-list></ol>
+        <p data-recommendation-message></p>
+    </section>
+
+    <div class="brand-groups">
+        <?php if ($productos === []): ?>
+            <p class="catalog-empty">Todavía no hay componentes publicados en el catálogo.</p>
+        <?php endif; ?>
+        <p class="catalog-empty" data-filter-empty hidden>No encontramos productos con esos criterios. Prueba ajustar la búsqueda o tus respuestas.</p>
+        <?php foreach ($gruposPorMarca as $claveMarca => $grupo): ?>
+            <section class="brand-group" data-brand-group="<?= $h($claveMarca) ?>" aria-label="Componentes <?= $h($grupo['marca']) ?>">
+                <h3><?= $h($grupo['marca']) ?></h3>
+                <div class="product-grid">
+                    <?php foreach ($grupo['productos'] as $producto): ?>
+                        <article id="producto-<?= (int) $producto['id'] ?>" class="product-card" data-product-category="<?= $h($producto['categoria']) ?>" data-product-price="<?= $h((string) $producto['precio']) ?>">
+                            <div class="product-image">
+                                <span>Imagen no disponible</span>
+                                <?php
+                                $imagenValida = is_string($producto['imagen'])
+                                    && preg_match('~\Aassets/productos/[A-Za-z0-9_-]+\.(?:avif|gif|jpe?g|png|webp)\z~i', $producto['imagen']);
+                                ?>
+                                <?php if ($imagenValida): ?>
+                                    <img src="<?= $h($producto['imagen']) ?>" alt="<?= $h($producto['nombre']) ?>" loading="lazy" onerror="this.remove()">
+                                <?php endif; ?>
+                            </div>
+                            <h4><?= $h($producto['nombre']) ?></h4>
+                            <p><?= $h($producto['descripcion']) ?></p>
+                            <p class="product-price">$<?= number_format((float) $producto['precio'], 2) ?> MXN</p>
+                            <p class="product-stock"><?= (int) $producto['existencias'] > 0 ? 'Disponible' : 'Agotado' ?></p>
+                            <?php if ((int) $producto['existencias'] > 0): ?>
+                                <form action="index.php" method="post" class="cart-action">
+                                    <input type="hidden" name="accion" value="agregar_carrito">
+                                    <input type="hidden" name="csrf_token" value="<?= $h($csrfToken) ?>">
+                                    <input type="hidden" name="producto_id" value="<?= (int) $producto['id'] ?>">
+                                    <button type="submit"><?= $logueado ? 'Agregar al carrito' : 'Inicia sesión y agrega' ?></button>
+                                </form>
+                            <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endforeach; ?>
+    </div>
+</section>

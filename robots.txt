@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin.php
+Disallow: /includes/
+Disallow: /database/
+Disallow: /seccion.php?vista=carrito
+Disallow: /gracias
+
+Sitemap: https://tudominio.com/sitemap.xml
