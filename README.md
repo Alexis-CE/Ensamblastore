@@ -1,6 +1,6 @@
 # EnsamblaStore (form.mx)
 
-Tienda de computadoras y componentes en PHP + MariaDB/MySQL. Todo el proyecto vive en esta carpeta.
+Tienda de computadoras y componentes 
 
 ## Estructura
 ```
