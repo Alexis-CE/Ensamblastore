@@ -93,6 +93,17 @@
                             <p><?= $h($producto['descripcion']) ?></p>
                             <p class="product-price">$<?= number_format((float) $producto['precio'], 2) ?> MXN</p>
                             <p class="product-stock"><?= (int) $producto['existencias'] > 0 ? 'Disponible' : 'Agotado' ?></p>
+                            <button type="button" class="product-preview-button" data-product-preview
+                                data-product-id="<?= (int) $producto['id'] ?>"
+                                data-product-name="<?= $h($producto['nombre']) ?>"
+                                data-product-description="<?= $h($producto['descripcion']) ?>"
+                                data-product-price="<?= $h((string) $producto['precio']) ?>"
+                                data-product-brand="<?= $h($producto['marca']) ?>"
+                                data-product-category="<?= $h($etiquetasCategorias[$producto['categoria']] ?? ucfirst(str_replace('-', ' ', $producto['categoria']))) ?>"
+                                data-product-stock="<?= (int) $producto['existencias'] ?>"
+                                data-product-image="<?= $h($imagenValida ? $producto['imagen'] : '') ?>">
+                                Ver detalles
+                            </button>
                             <?php if ((int) $producto['existencias'] > 0): ?>
                                 <form action="index.php" method="post" class="cart-action">
                                     <input type="hidden" name="accion" value="agregar_carrito">

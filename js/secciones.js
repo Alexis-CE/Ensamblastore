@@ -153,6 +153,77 @@ document.addEventListener('click', (evento) => {
     });
 });
 
+/* ---- Vista previa pública de productos ---- */
+const dialogoProducto = document.getElementById('product-preview-dialog');
+if (dialogoProducto) {
+    const imagen = dialogoProducto.querySelector('[data-preview-image]');
+    const nombre = dialogoProducto.querySelector('[data-preview-name]');
+    const precio = dialogoProducto.querySelector('[data-preview-price]');
+    const marca = dialogoProducto.querySelector('[data-preview-brand]');
+    const categoria = dialogoProducto.querySelector('[data-preview-category]');
+    const existencias = dialogoProducto.querySelector('[data-preview-stock]');
+    const descripcion = dialogoProducto.querySelector('[data-preview-description]');
+    const productoId = dialogoProducto.querySelector('[data-preview-product-id]');
+    const accion = dialogoProducto.querySelector('[data-preview-action]');
+    const botonAgregar = dialogoProducto.querySelector('[data-preview-cart-button]');
+
+    document.querySelectorAll('.product-card [data-product-preview]').forEach((boton) => {
+        const tarjeta = boton.closest('.product-card');
+        const imagenTarjeta = tarjeta?.querySelector('.product-image');
+        if (!imagenTarjeta) return;
+
+        imagenTarjeta.classList.add('product-image-preview');
+        imagenTarjeta.setAttribute('role', 'button');
+        imagenTarjeta.setAttribute('tabindex', '0');
+        imagenTarjeta.setAttribute('aria-label', `Ver detalles de ${boton.dataset.productName || 'este producto'}`);
+
+        const abrirVistaPrevia = () => boton.click();
+        imagenTarjeta.addEventListener('click', abrirVistaPrevia);
+        imagenTarjeta.addEventListener('keydown', (evento) => {
+            if (evento.key === 'Enter' || evento.key === ' ') {
+                evento.preventDefault();
+                abrirVistaPrevia();
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-product-preview]').forEach((boton) => {
+        boton.addEventListener('click', () => {
+            nombre.textContent = boton.dataset.productName || '';
+            precio.textContent = new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+            }).format(Number(boton.dataset.productPrice || 0));
+            marca.textContent = boton.dataset.productBrand || 'No especificada';
+            categoria.textContent = boton.dataset.productCategory || 'No especificado';
+            const stock = Number(boton.dataset.productStock || 0);
+            existencias.textContent = stock > 0 ? `Disponible (${stock})` : 'Agotado';
+            accion.hidden = stock <= 0;
+            if (botonAgregar) botonAgregar.disabled = stock <= 0;
+            descripcion.textContent = boton.dataset.productDescription || 'Sin especificaciones disponibles.';
+            productoId.value = boton.dataset.productId || '';
+
+            const rutaImagen = boton.dataset.productImage || '';
+            if (rutaImagen) {
+                imagen.src = rutaImagen;
+                imagen.alt = boton.dataset.productName || 'Producto';
+                imagen.hidden = false;
+            } else {
+                imagen.removeAttribute('src');
+                imagen.alt = '';
+                imagen.hidden = true;
+            }
+
+            dialogoProducto.showModal();
+        });
+    });
+
+    dialogoProducto.querySelector('[data-close-product-preview]')?.addEventListener('click', () => dialogoProducto.close());
+    dialogoProducto.addEventListener('click', (evento) => {
+        if (evento.target === dialogoProducto) dialogoProducto.close();
+    });
+}
+
 /* ---- Switch de tema (toda la página) ---- */
 const interruptorTema = document.querySelector('[data-theme-switch]');
 if (interruptorTema) {

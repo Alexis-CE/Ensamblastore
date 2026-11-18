@@ -259,6 +259,38 @@ $seoKey = $vista;
         <?php include __DIR__ . '/secciones/' . $secciones[$vista]['archivo']; ?>
     </main>
 
+    <?php if ($vista === 'computadoras' || $vista === 'componentes'): ?>
+    <dialog class="product-preview-dialog" id="product-preview-dialog" aria-labelledby="preview-title">
+        <div class="product-preview-panel">
+            <button type="button" class="dialog-close" data-close-product-preview aria-label="Cerrar vista previa">×</button>
+            <div class="product-preview-media">
+                <span>Imagen no disponible</span>
+                <img data-preview-image src="" alt="" hidden>
+            </div>
+            <div class="product-preview-details">
+                <p class="eyebrow"><span></span> DETALLES DEL PRODUCTO</p>
+                <h2 id="preview-title" data-preview-name></h2>
+                <p class="product-preview-price" data-preview-price></p>
+                <dl class="product-preview-meta">
+                    <div><dt>Marca</dt><dd data-preview-brand></dd></div>
+                    <div><dt>Tipo</dt><dd data-preview-category></dd></div>
+                    <div><dt>Disponibilidad</dt><dd data-preview-stock></dd></div>
+                </dl>
+                <div class="product-preview-specs">
+                    <h3>Especificaciones</h3>
+                    <p data-preview-description></p>
+                </div>
+                <form action="index.php" method="post" class="product-preview-action" data-preview-action>
+                    <input type="hidden" name="accion" value="agregar_carrito">
+                    <input type="hidden" name="csrf_token" value="<?= $h($csrfToken) ?>">
+                    <input type="hidden" name="producto_id" value="" data-preview-product-id>
+                    <button type="submit" data-preview-cart-button><?= $logueado ? 'Agregar al carrito' : 'Inicia sesión y agrega' ?></button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+    <?php endif; ?>
+
     <footer class="site-footer">
         <a class="brand footer-brand" href="index.php"><span class="brand-mark">e/</span><span class="brand-name">ENSAMBLA<span>STORE</span></span></a>
         <p>Tecnología a tu medida.</p>
