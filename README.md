@@ -25,3 +25,4 @@ form.mx/
     ├── seo/              imagen Open Graph
     └── productos/       fotos de productos (ver LEEME.txt)
 ```
+

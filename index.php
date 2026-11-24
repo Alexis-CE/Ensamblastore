@@ -21,6 +21,37 @@ if (empty($_SESSION['csrf_token'])) {
 }
 $csrfToken = $_SESSION['csrf_token'];
 
+function enviarAvisoPedido(array $pedido): void
+{
+    $destinatario = '2030pomelo@gmail.com';
+    $replyTo = str_replace(["\r", "\n"], '', $pedido['correo']);
+    $nombre = str_replace(["\r", "\n"], ' ', $pedido['nombre']);
+
+    $asunto = 'Nuevo pedido pendiente #' . $pedido['id'] . ' - EnsamblaStore';
+    $mensaje = "Nuevo pedido recibido\n\n"
+        . 'Pedido: #' . $pedido['id'] . "\n"
+        . 'Nombre: ' . $nombre . "\n"
+        . 'Correo: ' . $replyTo . "\n"
+        . 'Teléfono: ' . ($pedido['telefono'] !== '' ? $pedido['telefono'] : 'No proporcionado') . "\n"
+        . 'Dirección: ' . ($pedido['direccion'] !== '' ? $pedido['direccion'] : 'No proporcionada') . "\n"
+        . 'Total: $' . number_format((float) $pedido['total'], 2) . "\n\n"
+        . "Productos:\n";
+
+    foreach ($pedido['productos'] as $producto) {
+        $mensaje .= '- ' . $producto['nombre'] . ' x' . $producto['cantidad']
+            . ' - $' . number_format((float) $producto['subtotal'], 2) . "\n";
+    }
+
+    $cabeceras = "From: EnsamblaStore <{$destinatario}>\r\n"
+        . "Reply-To: {$replyTo}\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n"
+        . "X-Mailer: PHP/" . phpversion();
+
+    if (!@mail($destinatario, $asunto, $mensaje, $cabeceras)) {
+        error_log('EnsamblaStore: no se pudo enviar el aviso por correo del pedido #' . $pedido['id']);
+    }
+}
+
 // Cerrar sesion: solo por POST con token CSRF
 if ($accion === 'salir') {
     $tokenSalida = $_POST['csrf_token'] ?? '';
@@ -289,6 +320,24 @@ if (in_array($accion, ['agregar_carrito', 'actualizar_carrito', 'quitar_carrito'
             }
             $consulta->close();
 
+            $productosPedido = [];
+            $consulta = $conexion->prepare(
+                'SELECT nombre_producto, cantidad, subtotal
+                 FROM orden_productos
+                 WHERE orden_id = ?'
+            );
+            $consulta->bind_param('i', $ordenId);
+            $consulta->execute();
+            $consulta->bind_result($nombreProducto, $cantidadProducto, $subtotalProducto);
+            while ($consulta->fetch()) {
+                $productosPedido[] = [
+                    'nombre' => $nombreProducto,
+                    'cantidad' => (int) $cantidadProducto,
+                    'subtotal' => (float) $subtotalProducto,
+                ];
+            }
+            $consulta->close();
+
             // descuenta las existencias en la misma transaccion (si algo falla, todo se revierte)
             $consulta = $conexion->prepare(
                 'UPDATE productos p
@@ -400,6 +449,18 @@ if (in_array($accion, ['agregar_carrito', 'actualizar_carrito', 'quitar_carrito'
     } catch (Throwable $e) {
         $conexion->rollback();
         throw $e;
+    }
+
+    if ($accion === 'crear_pedido') {
+        enviarAvisoPedido([
+            'id' => $ordenId,
+            'nombre' => $nombreContacto,
+            'correo' => $correo,
+            'telefono' => $telefono,
+            'direccion' => $direccion,
+            'total' => $totalPedido,
+            'productos' => $productosPedido,
+        ]);
     }
 
     if ($mensajeOperacionCarrito === null) {
