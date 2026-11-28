@@ -5,6 +5,9 @@ RewriteEngine On
 # carpetas internas: no se sirven por HTTP (PHP sigue pudiendo incluirlas)
 RewriteRule ^(database|includes|herramientas)(/|$) - [F,L]
 
+# nunca servir el repositorio git ni sus archivos
+RewriteRule (^|/)\.git(/|$) - [F,L]
+
 RewriteRule ^(gracias|privacidad)/?$ seccion.php?vista=$1 [QSA,L,NC]
 
 # archivos que no deben ser publicos
