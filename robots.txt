@@ -6,4 +6,4 @@ Disallow: /database/
 Disallow: /seccion.php?vista=carrito
 Disallow: /gracias
 
-Sitemap: https://tudominio.com/sitemap.xml
+Sitemap: https://ensamblastore.shop/sitemap.xml

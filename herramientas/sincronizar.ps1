@@ -1,24 +1,17 @@
 #requires -Version 5.1
-<#
- Sincroniza EnsamblaStore entre PCs usando la USB (repo git "bare" + respaldo de la base).
-   salida  : respalda la base `dat` a la USB, hace commit y sube el codigo a la USB
-   llegada : baja el codigo de la USB y (si quieres) importa la base de la USB
-
- NUNCA copia carpetas de mysql\data: la base viaja siempre como .sql (mysqldump).
-#>
 param(
     [Parameter(Mandatory = $true)][ValidateSet('salida', 'llegada')][string]$Modo,
-    [switch]$Auto   # no pregunta (para pruebas): responde "si" a importar la base
+    [switch]$Auto
 )
 
 $ErrorActionPreference = 'Stop'
-$proyecto = Split-Path -Parent $PSScriptRoot            # ...\htdocs\form.mx
-$xampp    = Split-Path (Split-Path $proyecto)           # ...\xampp
+$proyecto = Split-Path -Parent $PSScriptRoot
+$xampp    = Split-Path (Split-Path $proyecto)
 $bin      = Join-Path $xampp 'mysql\bin'
 $mysql    = Join-Path $bin 'mysql.exe'
 $mysqldump = Join-Path $bin 'mysqldump.exe'
 $mysqladmin = Join-Path $bin 'mysqladmin.exe'
-$respaldos = Join-Path $xampp 'mysql\respaldos'         # respaldos locales (fuera de mysql\data)
+$respaldos = Join-Path $xampp 'mysql\respaldos'
 $marca     = Join-Path $respaldos 'ultimo_import.txt'
 $rama      = 'main'
 
@@ -26,7 +19,6 @@ function Fallo($msg) { Write-Host "`n[X] $msg" -ForegroundColor Red; exit 1 }
 function Ok($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
 function Info($msg)  { Write-Host "[..] $msg" -ForegroundColor Cyan }
 
-# --- comprobaciones -----------------------------------------------------------
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) { Fallo 'git no esta instalado en esta PC.' }
 foreach ($exe in @($mysql, $mysqldump, $mysqladmin)) {
     if (-not (Test-Path $exe)) { Fallo "No encuentro $exe. El proyecto debe estar en <xampp>\htdocs\form.mx." }
@@ -34,7 +26,6 @@ foreach ($exe in @($mysql, $mysqldump, $mysqladmin)) {
 & $mysqladmin -u root ping *> $null
 if ($LASTEXITCODE -ne 0) { Fallo 'MySQL no esta encendido. Inicia MySQL en el panel de XAMPP y vuelve a intentar.' }
 
-# --- buscar la USB (la letra cambia entre PCs) --------------------------------
 $usb = $null
 foreach ($d in (Get-PSDrive -PSProvider FileSystem)) {
     if (Test-Path (Join-Path $d.Root 'form.mx.git\HEAD')) { $usb = $d.Root; break }
@@ -47,17 +38,14 @@ Info "USB encontrada en $usb"
 
 Set-Location $proyecto
 
-# la USB es FAT32 (sin duenos de archivo): evita el aviso "dubious ownership"
 $seguros = @(git config --global --get-all safe.directory)
 if ($seguros -notcontains $repoUsb) { git config --global --add safe.directory $repoUsb | Out-Null }
 
-# remoto "usb" apuntando a la letra actual
 $remotos = @(git remote)
 if ($remotos -notcontains 'usb') { git remote add usb $repoUsb } else { git remote set-url usb $repoUsb }
 git fetch -q usb
 if ($LASTEXITCODE -ne 0) { Fallo 'No se pudo leer el repositorio de la USB.' }
 
-# --- SALIDA -------------------------------------------------------------------
 if ($Modo -eq 'salida') {
     $tieneRemoto = git rev-parse --verify --quiet "usb/$rama"
     if ($tieneRemoto) {
@@ -65,7 +53,6 @@ if ($Modo -eq 'salida') {
         if ($atras -gt 0) { Fallo "La USB tiene cambios mas nuevos que esta PC ($atras commits). Corre primero 'TRAER DE USB'." }
     }
 
-    # 1) respaldo de la base
     New-Item -ItemType Directory -Force -Path $carpetaBd | Out-Null
     $tmp = Join-Path $env:TEMP 'respaldo_dat.sql'
     & $mysqldump -u root --databases dat --add-drop-database --routines --default-character-set=utf8mb4 --result-file=$tmp
@@ -75,7 +62,6 @@ if ($Modo -eq 'salida') {
     Remove-Item $tmp -Force
     Ok "Base respaldada en $dumpUsb"
 
-    # 2) commit + push del codigo
     git add -A
     if (git status --porcelain) {
         git commit -q -m ("Sincronizacion {0} desde {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm'), $env:COMPUTERNAME)
@@ -87,7 +73,6 @@ if ($Modo -eq 'salida') {
     exit 0
 }
 
-# --- LLEGADA ------------------------------------------------------------------
 if (git status --porcelain) {
     Fallo "Hay cambios sin guardar en esta PC. Corre primero 'GUARDAR Y LLEVAR A USB' para no perderlos."
 }
@@ -112,7 +97,6 @@ Write-Host 'Importarla REEMPLAZA la base dat de esta PC. Antes se guarda un resp
 if ($Auto) { $resp = 'S' } else { $resp = Read-Host 'Importar la base de la USB? (S/N)' }
 if ($resp -notmatch '^[sS]') { Info 'Base NO importada. El codigo si se actualizo.'; exit 0 }
 
-# respaldo local previo (si existe la base)
 $hayDat = & $mysql -u root -N -e "select count(*) from information_schema.schemata where schema_name='dat';"
 if ($hayDat -eq '1') {
     $antes = Join-Path $respaldos ("dat_antes_{0}.sql" -f (Get-Date -Format 'yyyyMMdd-HHmmss'))

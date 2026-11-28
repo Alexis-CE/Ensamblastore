@@ -4,7 +4,6 @@ require_once __DIR__ . '/includes/conexion.php';
 
 $baseSitio = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
 
-// Cerrar sesión
 if (isset($_GET['salir'])) {
     header('Location: index.php');
     exit;
@@ -74,7 +73,6 @@ if ($logueado && (!isset($_SESSION['usuario_id']) || !isset($_SESSION['rol']))) 
     $consulta->close();
 }
 
-// Formularios con sesión propia: login, registro y contacto exigen token CSRF
 if (in_array($accion, ['login', 'registro', 'contacto'], true)) {
     $tokenFormulario = $_POST['csrf_token'] ?? '';
     if (!is_string($tokenFormulario) || !hash_equals($csrfToken, $tokenFormulario)) {
@@ -83,7 +81,6 @@ if (in_array($accion, ['login', 'registro', 'contacto'], true)) {
     }
 }
 
-// Iniciar sesión
 if ($accion === 'login' && !$logueado) {
     $usuario = $_POST['usuario'] ?? '';
     $usuario = is_string($usuario) ? trim($usuario) : '';
@@ -91,7 +88,6 @@ if ($accion === 'login' && !$logueado) {
     $contrasena = is_string($contrasena) ? $contrasena : '';
     $ipCliente = substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
 
-    // limite de intentos fallidos por IP: 8 cada 15 minutos
     $consulta = $conexion->prepare('SELECT COUNT(*) FROM intentos_login WHERE ip = ? AND creado_en > (NOW() - INTERVAL 15 MINUTE)');
     $consulta->bind_param('s', $ipCliente);
     $consulta->execute();
@@ -153,7 +149,6 @@ if ($accion === 'login' && !$logueado) {
     }
 }
 
-// Crear cuenta
 if ($accion === 'registro' && !$logueado) {
     $usuario = trim($_POST['usuario'] ?? '');
     $contrasena = $_POST['contrasena'] ?? '';
@@ -483,7 +478,6 @@ if (in_array($accion, ['agregar_carrito', 'actualizar_carrito', 'quitar_carrito'
     exit;
 }
 
-// Enviar mensaje de contacto (solo con sesión)
 if ($accion === 'contacto') {
     if (!$logueado) {
         $vista = 'login';
@@ -520,7 +514,6 @@ if (!$logueado && $vista === '' && isset($_GET['login'])) {
     $vista = 'login';
 }
 
-// Enlace a contacto: directo si hay sesión, si no abre el login
 $enlaceContacto = $logueado ? 'href="seccion.php?vista=soporte#soporte"' : 'href="?login=1" data-open-login';
 $cantidadCarrito = 0;
 $totalResumenCarrito = 0.0;
@@ -538,7 +531,7 @@ if ($logueado && isset($_SESSION['usuario_id'])) {
     $consulta->fetch();
     $consulta->close();
 }
-// Cifras reales del catálogo (se leen de la base de datos)
+
 $resumenCatalogo = ['computadoras' => 0, 'componentes' => 0, 'marcas' => 0];
 $resultado = $conexion->query('select tipo, count(*) as total from productos where activo = 1 group by tipo');
 while ($fila = $resultado->fetch_assoc()) {
@@ -681,7 +674,6 @@ $seoKey = 'inicio';
         <section class="brands" aria-label="Marcas que manejamos">
             <p class="eyebrow"><span></span> MARCAS QUE MANEJAMOS</p>
             <?php
-            // archivo => [nombre, proporción ancho/alto del SVG]
             $marcas = [
                 'asus' => ['ASUS', 4.84], 'acer' => ['Acer', 4.15], 'dell' => ['Dell', 1.00], 'hp' => ['HP', 1.00],
                 'lenovo' => ['Lenovo', 3.00], 'msi' => ['MSI', 0.82], 'amd' => ['AMD', 4.19], 'intel' => ['Intel', 2.58],
@@ -742,7 +734,6 @@ $seoKey = 'inicio';
     <p class="creditos">Modelo 3D "<a href="https://sketchfab.com/3d-models/asus-strix-b-550-f-gaming-motherboard-realistic-3eba5f45bed74fbeb2647de38047000f" target="_blank" rel="noopener">Asus Strix b-550-f Gaming Motherboard Realistic</a>" por <a href="https://sketchfab.com/MUSHROOM_BUILDS" target="_blank" rel="noopener">MUSHROOM_BUILDS</a>, licencia <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC-BY 4.0</a>.</p>
 
     <?php if (!$logueado): ?>
-    <!-- Login / crear cuenta (modal) -->
     <dialog class="login-dialog" id="login-dialog" <?= $vista !== '' ? 'open' : '' ?>>
         <section class="form-panel" id="panel-login" <?= $vista === 'registro' ? 'hidden' : '' ?>>
             <button type="button" class="dialog-close" data-close-login aria-label="Cerrar">×</button>
@@ -789,7 +780,6 @@ $seoKey = 'inicio';
 
     <a class="mobile-sticky-cta" href="seccion.php?vista=computadoras">Explorar catálogo</a>
     <script>
-        /* ---- Modal de login / registro ---- */
         const dialogo = document.getElementById('login-dialog');
         if (dialogo) {
             const paneles = { login: document.getElementById('panel-login'), registro: document.getElementById('panel-registro') };

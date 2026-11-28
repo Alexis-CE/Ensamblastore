@@ -225,7 +225,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     $consulta->execute();
                     $consulta->close();
-                    // borra la foto anterior solo si la subio el admin (nombre aleatorio), nunca las del equipo
                     if ($imagenAnterior !== null && $imagenAnterior !== $imagen
                         && preg_match('#^assets/productos/[a-f0-9]{32}\.(jpg|png|webp)$#', $imagenAnterior)) {
                         $rutaAnterior = __DIR__ . '/' . $imagenAnterior;

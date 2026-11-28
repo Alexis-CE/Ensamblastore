@@ -12,6 +12,6 @@ RewriteRule ^(gracias|privacidad)/?$ seccion.php?vista=$1 [QSA,L,NC]
     Require all denied
 </FilesMatch>
 
-# XAMPP sirve este proyecto bajo /form.mx. Si se publica en la raíz del dominio,
-# cambia la ruta a: ErrorDocument 404 /404.php
-ErrorDocument 404 /form.mx/404.php
+# produccion (raiz del dominio): /404.php
+# en XAMPP local (bajo /form.mx) seria: ErrorDocument 404 /form.mx/404.php
+ErrorDocument 404 /404.php

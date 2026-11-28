@@ -153,7 +153,6 @@ document.addEventListener('click', (evento) => {
     });
 });
 
-/* ---- Vista previa pública de productos ---- */
 const dialogoProducto = document.getElementById('product-preview-dialog');
 if (dialogoProducto) {
     const imagen = dialogoProducto.querySelector('[data-preview-image]');
@@ -224,7 +223,6 @@ if (dialogoProducto) {
     });
 }
 
-/* ---- Switch de tema (toda la página) ---- */
 const interruptorTema = document.querySelector('[data-theme-switch]');
 if (interruptorTema) {
     const textoTema = interruptorTema.querySelector('[data-theme-text]');

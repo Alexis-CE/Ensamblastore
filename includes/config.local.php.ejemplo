@@ -1,0 +1,8 @@
+<?php
+// renombra a config.local.php y pon los datos de Hostinger (hPanel > Bases de datos)
+return [
+    'host' => 'localhost',
+    'user' => 'u000000000_usuario',
+    'pass' => 'TU_CONTRASENA',
+    'db'   => 'u000000000_dat',
+];

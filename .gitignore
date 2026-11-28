@@ -5,3 +5,7 @@ respaldo_*.sql
 *.tmp
 Thumbs.db
 CAMBIOS_*.txt
+
+# credenciales de produccion (no subir)
+includes/config.local.php
+*.zip
