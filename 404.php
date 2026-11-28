@@ -11,7 +11,7 @@ if ($baseSitio === '.') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#06392C">
+    <meta name="theme-color" content="#080B14">
     <title>Página no encontrada | EnsamblaStore</title>
     <link rel="icon" type="image/svg+xml" href="<?= htmlspecialchars($baseSitio, ENT_QUOTES, 'UTF-8') ?>/favicon.svg">
     <link rel="stylesheet" href="<?= htmlspecialchars($baseSitio, ENT_QUOTES, 'UTF-8') ?>/css/estilos.css">

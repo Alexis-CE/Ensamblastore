@@ -691,3 +691,17 @@ html, body { overflow-x: clip; }
     .product-preview-details { padding: 24px 20px; }
     .product-preview-meta { grid-template-columns: 1fr; }
 }
+
+/* ===== paleta del modo oscuro (el modo claro no se toca) ===== */
+html:not([data-tema="claro"]) {
+    --ink: #080B14;     /* fondo principal */
+    --panel: #101627;   /* bloque secundario */
+    --card: #1B2438;    /* tarjetas y botones */
+    --line: #2E3B54;    /* bordes y separadores */
+    --muted: #7D8CA8;   /* texto secundario y etiquetas */
+}
+html:not([data-tema="claro"]) :is(.access-card, .access-card:hover, .access-stats, .recommendation-quiz, .brand-group, .product-card, .cart-item, .online-business-note, .portfolio-card, .faq-section, .product-preview-meta div, .menu-trigger, .nav-dropdown > summary, .theme-track) { background: var(--card); }
+html:not([data-tema="claro"]) .cart-item-image { background: linear-gradient(145deg, var(--card), var(--panel)); }
+html:not([data-tema="claro"]) :is(.main-nav, .access-heading > p:last-child, .access-card p, .hero-description, .hero-note, .scroll-cue, .site-footer > p, .creditos, .catalog-heading > p:last-child, .support-intro > p:last-child, .catalog-filters label, .quiz-heading p, .recommendation-results > p, .recommendation-quiz label, .product-card h4 + p, .product-card .product-stock, .catalog-empty, .cart-item-details p, .cart-total p, .support-login p, .intro, .stat-row) { color: var(--muted); }
+html:not([data-tema="claro"]) :is(input, textarea) { border-color: var(--line); }
+html:not([data-tema="claro"]) :is(input, textarea)::placeholder { color: var(--muted); opacity: .7; }

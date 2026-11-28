@@ -22,7 +22,7 @@ $csrfToken = $_SESSION['csrf_token'];
 
 function enviarAvisoPedido(array $pedido): void
 {
-    $destinatario = '2030pomelo@gmail.com';
+    $destinatario = '2020pomelo@gmail.com';
     $replyTo = str_replace(["\r", "\n"], '', $pedido['correo']);
     $nombre = str_replace(["\r", "\n"], ' ', $pedido['nombre']);
 
@@ -41,7 +41,7 @@ function enviarAvisoPedido(array $pedido): void
             . ' - $' . number_format((float) $producto['subtotal'], 2) . "\n";
     }
 
-    $cabeceras = "From: EnsamblaStore <{$destinatario}>\r\n"
+    $cabeceras = "From: EnsamblaStore <no-reply@ensamblastore.shop>\r\n"
         . "Reply-To: {$replyTo}\r\n"
         . "Content-Type: text/plain; charset=UTF-8\r\n"
         . "X-Mailer: PHP/" . phpversion();
@@ -547,7 +547,7 @@ $seoKey = 'inicio';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#06392C">
+    <meta name="theme-color" content="#080B14">
     <?php require __DIR__ . '/includes/seo_head.php'; ?>
     <script>try { document.documentElement.dataset.tema = localStorage.getItem('tema') === 'claro' ? 'claro' : 'oscuro'; } catch (e) { document.documentElement.dataset.tema = 'oscuro'; }</script>
     <link rel="stylesheet" href="css/estilos.css?v=<?= filemtime(__DIR__ . '/css/estilos.css') ?>">
